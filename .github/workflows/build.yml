@@ -29,16 +29,6 @@ jobs:
         with:
           orion: "true"
 
-      - name: Build package
-        run: |
-          rm -f packages/*
-          make package FINALPACKAGE=1
-      - name: Upload package
-        uses: actions/upload-artifact@v3
-        with:
-          name: "Package built by ${{ matrix.os }}"
-          path: ${{ github.workspace }}/packages/*-arm.deb
-
       - name: Build rootless package
         run: |
           rm -f packages/*
