@@ -257,6 +257,11 @@ static void batchSwizzlingOnClass(Class cls, NSArray<NSString*>*origSelectors, I
 }
 %end
 
+%hook T1ProfileSummaryView
+- (BOOL)shouldShowGetVerifiedButton {
+    return [BHTManager hidePremiumOffer] ? false : %orig;
+}
+%end
 
 // MARK: hide ADs
 // credit goes to haoict https://github.com/haoict/twitter-no-ads
@@ -273,7 +278,7 @@ static void batchSwizzlingOnClass(Class cls, NSArray<NSString*>*origSelectors, I
     
     if ([self.adDisplayLocation isEqualToString:@"PROFILE_TWEETS"]) {
         if ([BHTManager hideWhoToFollow]) {
-            if ([class_name isEqualToString:@"T1URTTimelineUserItemViewModel"] || [class_name isEqualToString:@"TwitterURT.URTModuleHeaderViewModel"] || [class_name isEqualToString:@"TwitterURT.URTModuleFooterViewModel"]) {
+            if ([class_name isEqualToString:@"T1URTTimelineUserItemViewModel"] || [class_name isEqualToString:@"T1TwitterSwift.URTTimelineCarouselViewModel"] || [class_name isEqualToString:@"TwitterURT.URTModuleHeaderViewModel"] || [class_name isEqualToString:@"TwitterURT.URTModuleFooterViewModel"]) {
                 [_orig setHidden:true];
             }
         }
@@ -333,7 +338,7 @@ static void batchSwizzlingOnClass(Class cls, NSArray<NSString*>*origSelectors, I
     
     if ([self.adDisplayLocation isEqualToString:@"PROFILE_TWEETS"]) {
         if ([BHTManager hideWhoToFollow]) {
-            if ([class_name isEqualToString:@"T1URTTimelineUserItemViewModel"] || [class_name isEqualToString:@"TwitterURT.URTModuleHeaderViewModel"] || [class_name isEqualToString:@"TwitterURT.URTModuleFooterViewModel"]) {
+            if ([class_name isEqualToString:@"T1URTTimelineUserItemViewModel"] || [class_name isEqualToString:@"T1TwitterSwift.URTTimelineCarouselViewModel"] || [class_name isEqualToString:@"TwitterURT.URTModuleHeaderViewModel"] || [class_name isEqualToString:@"TwitterURT.URTModuleFooterViewModel"]) {
                 return 0;
             }
         }
@@ -848,6 +853,15 @@ static void batchSwizzlingOnClass(Class cls, NSArray<NSString*>*origSelectors, I
 %hook THFHomeTimelineItemsViewController
 - (void)_t1_initializeFleets {
     if ([BHTManager hideSpacesBar]) {
+        return;
+    }
+    return %orig;
+}
+%end
+
+%hook THFHomeTimelineContainerViewController
+- (void)_t1_showPremiumUpsellIfNeeded {
+    if ([BHTManager hidePremiumOffer]) {
         return;
     }
     return %orig;
